@@ -1,0 +1,59 @@
+function calculate(){
+let V=0,A=0,R=0,K=0;
+for(let i=0;i<20;i++){
+let answer=document.querySelector(`input[name="q${i}"]:checked`);
+if(!answer){alert("من فضلك أجب عن جميع الأسئلة");return;}
+let val=parseInt(answer.value);
+if(val===0) V++;
+if(val===1) A++;
+if(val===2) R++;
+if(val===3) K++;
+}
+
+let max=Math.max(V,A,R,K);
+let style="";
+let advice="";
+let link="";
+
+if(max===V){
+style="بصري";
+advice="تحب الصور والخرائط الذهنية والرسوم التوضيحية.";
+link="https://drive.google.com/drive/folders/13ivolNE9Mz1rBcoBaVzlJ_RcHZbG6U61?usp=drive_link";
+}
+
+else if(max===A){
+style="سمعي";
+advice="تتعلم أفضل بالشرح والمناقشة والاستماع.";
+link="https://drive.google.com/drive/folders/1qYEKcEjQrHKeIRtPzzqOyqHo85MxdvNw?usp=drive_link";
+}
+
+else if(max===R){
+style="قرائي";
+advice="تفضل القراءة والكتابة والتلخيص.";
+link="https://drive.google.com/drive/folders/1thXr_bNXPbODC9IOXe-aYWXp-vltH8kt?usp=drive_link";
+}
+
+else if(max===K){
+style="عملي";
+advice="تتعلم من خلال التطبيق والتجربة العملية.";
+link="https://drive.google.com/drive/folders/1nwN6JSpulgEJyWYfWJMCI7sViLIZNHj_?usp=drive_link";
+}
+
+document.getElementById("result").innerHTML=
+`<h3>النتيجة</h3>
+<p>نمط التعلم لديك هو: <strong>${style}</strong></p>
+<p>${advice}</p>
+
+<p><a href="${link}" target="_blank" 
+style="display:inline-block;margin-top:10px;background:#2c7be5;color:white;padding:10px 15px;border-radius:8px;text-decoration:none;font-weight:bold;">
+انتقل إلى الكتاب التكيفي الممتع
+</a></p>
+
+<p>درجاتك:</p>
+<ul>
+<li>بصري: ${V}</li>
+<li>سمعي: ${A}</li>
+<li>قرائي: ${R}</li>
+<li>عملي: ${K}</li>
+</ul>`;
+}
