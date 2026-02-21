@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تحديد أنماط التعلم</title>
+<style>
+body{
+font-family: Arial;
+direction: rtl;
+background:#f4f6f9;
+padding:20px;
+}
+.container{
+max-width:800px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+h1{
+text-align:center;
+color:#2c3e50;
+}
+.question{
+margin-bottom:15px;
+padding:10px;
+background:#fafafa;
+border-radius:8px;
+}
+button{
+background:#2c7be5;
+color:white;
+padding:10px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+button:hover{
+background:#1a5fd0;
+}
+.result{
+margin-top:20px;
+padding:15px;
+background:#e8f4ff;
+border-radius:8px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>اختبار تحديد أنماط التعلم</h1>
+<p>اكتب اسمك ثم أجب عن جميع الأسئلة:</p>
+
+<input type="text" id="studentName" placeholder="اكتب اسمك هنا" style="width:100%;padding:8px;margin-bottom:15px;">
+
+<div id="questions"></div>
+
+<button onclick="calculate()">اعرف نتيجتي</button>
+
+<div class="result" id="result"></div>
+</div>
+
+<script>
+const questionsData = [
+"عندما أتعلم درسًا جديدًا أحب أن:",
+"إذا أردت أن أعرف مكانًا جديدًا أفضل أن:",
+"عندما لا أفهم فكرة في الدرس أحب أن:",
+"قبل الاختبار أحب أن:",
+"عندما أتعلم شيئًا جديدًا أفضل أن:",
+"في الحصة أحب أن:",
+"إذا أردت أن أحفظ معلومات أفضل أن:",
+"عندما يعمل المعلم نشاطًا جديدًا أحب أن:",
+"عندما يشرح المعلم تجربة علمية أفضل أن:",
+"عند استخدام جهاز جديد لأول مرة أحب أن:",
+"عندما أعمل في مجموعة أفضل أن:",
+"إذا طلب مني المعلم تلخيص درس أفضل أن:",
+"عندما أتعلم كلمات جديدة في اللغة أفضل أن:",
+"إذا نسيت واجبًا دراسيًا أتذكره عندما:",
+"عند مشاهدة درس على الكمبيوتر أفضل أن:",
+"عندما أتعلم مهارة رياضية جديدة أفضل أن:",
+"إذا أردت أن أفهم قصة جديدة أفضل أن:",
+"عندما أراجع الدرس في المنزل أفضل أن:",
+"إذا شاركت في مشروع مدرسي أحب أن:",
+"عندما أتعلم لعبة جديدة أفضل أن:"
+];
+
+const options = [
+["أشاهد صورًا ورسومًا","أستمع لشرح المعلم","أقرأ من الكتاب","أعمل النشاط بنفسي"],
+["أرى خريطة أو صورة","أسمع الشرح","أقرأ العنوان","أذهب مع شخص يعرف المكان"],
+["أرى رسمة توضحها","أسمع شرحًا مرة أخرى","أقرأها من جديد","أجرب حل سؤال"],
+["أنظر إلى الرسوم","أسمع الشرح","أقرأ الملخص","أحل أسئلة"],
+["أشاهد أحدًا يقوم به","أسمع الخطوات","أقرأ الطريقة","أجرب بنفسي"],
+["أرى عرضًا بصريًا","أشارك بالكلام","أقرأ من الكتاب","أعمل نشاطًا عمليًا"],
+["أستخدم ألوانًا","أرددها بصوت","أكتبها","أستخدمها في نشاط"],
+["أشاهد العرض","أسمع الشرح","أقرأ التعليمات","أبدأ التطبيق"],
+["أرى التجربة","أستمع للشرح","أقرأ الخطوات","أشارك بالتنفيذ"],
+["أرى صورًا","أستمع للشرح","أقرأ الكتيب","أجرب الأزرار"],
+["أستخدم رسومات","أناقش","أكتب الأفكار","أنفذ عمليًا"],
+["أرسم خريطة","أشرحه بصوتي","أكتبه","أقدمه عمليًا"],
+["أراها بألوان","أسمع نطقها","أكتبها","أستخدمها في نشاط"],
+["أرى شكلها","أسمع الحديث عنها","أقرأ عنها","أبدأ تنفيذ نشاط مشابه"],
+["به صور","به شرح صوتي","به نصوص","به تفاعل"],
+["أرى المدرب","أستمع لتعليماته","أقرأ الخطوات","أجربها"],
+["أرى صورًا","أسمعها","أقرأها","أمثلها"],
+["أستخدم مخططات","أشرح بصوت","أقرأ الدرس","أحل تدريبات"],
+["أصمم لوحات","أقدم الشرح","أكتب التقرير","أنفذ عمليًا"],
+["أرى فيديو","أستمع للقواعد","أقرأ التعليمات","أبدأ اللعب"]
+];
+
+const container = document.getElementById("questions");
+
+questionsData.forEach((q,i)=>{
+let div = document.createElement("div");
+div.classList.add("question");
+div.innerHTML = `<strong>${i+1}) ${q}</strong><br>`;
+options[i].forEach((opt,index)=>{
+div.innerHTML += `<label><input type="radio" name="q${i}" value="${index}"> ${opt}</label><br>`;
+});
+container.appendChild(div);
+});
+
+function calculate(){
+let V=0,A=0,R=0,K=0;
+for(let i=0;i<20;i++){
+let answer=document.querySelector(`input[name="q${i}"]:checked`);
+if(!answer){alert("من فضلك أجب عن جميع الأسئلة");return;}
+let val=parseInt(answer.value);
+if(val===0) V++;
+if(val===1) A++;
+if(val===2) R++;
+if(val===3) K++;
+}
+let max=Math.max(V,A,R,K);
+let style="";
+let advice="";
+if(max===V){style="بصري"; advice="تحب الصور والخرائط الذهنية والرسوم التوضيحية.";}
+if(max===A){style="سمعي"; advice="تتعلم أفضل بالشرح والمناقشة والاستماع.";}
+if(max===R){style="قرائي/كتابي"; advice="تفضل القراءة والكتابة والتلخيص.";}
+if(max===K){style="حركي"; advice="تتعلم من خلال التطبيق والتجربة العملية.";}
+
+document.getElementById("result").innerHTML=
+`<h3>النتيجة</h3>
+<p>نمط التعلم لديك هو: <strong>${style}</strong></p>
+<p>${advice}</p>
+<p>درجاتك:</p>
+<ul>
+<li>بصري: ${V}</li>
+<li>سمعي: ${A}</li>
+<li>قرائي/كتابي: ${R}</li>
+<li>حركي: ${K}</li>
+</ul>`;
+}
+</script>
+
+</body>
+</html>
